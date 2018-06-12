@@ -1,4 +1,4 @@
-"use strict";
+//"use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/builtin/interopRequireDefault");
 

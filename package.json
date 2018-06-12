@@ -1,6 +1,6 @@
 {
-  "name": "redux02",
-  "version": "0.1.0",
+  "name": "postops",
+  "version": "0.1.4",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^1.2.0",

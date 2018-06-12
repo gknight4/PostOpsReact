@@ -28,7 +28,12 @@ function register (params){
   })
 }
 
+function tryServer(){
+  return new Promise((res, rej)=>{return fetch(baseUrl, po("GET", "")).then(res, rej);})
+}
+
 function login (params){
+  console.log("login");
   return new Promise((res, rej)=>{
     let httpObj = po ("GET", "") ;
     let url = baseUrl + "/open/authenticate/" + params.useremail + "/" + params.password ;
@@ -36,11 +41,11 @@ function login (params){
       resp.header = response.headers.get("Authorization") ;
       console.log(resp.header);
       res(resp); 
-    }), e=>{rej(e)});
+    }));
   })
 }
 
-function checkAuth (params){
+function checkAuth (params){// this is the first attempt to contact the server
 //  console.log("checkAuth");
   return new Promise((res, rej)=>{
     let httpObj = po ("GET", "") ;
@@ -101,6 +106,8 @@ function httpC (type, params) {
       return getStringStores(params);
     case "setstrstos":
       return setStringStores(params);
+    case "tryserver":
+      return tryServer();
     default:
       break ;
   }
@@ -203,4 +210,4 @@ function PostOpsRequest (strings){
   
 }
 
-export { httpC, PostOpsRequest }
+export { baseUrl, httpC, PostOpsRequest }

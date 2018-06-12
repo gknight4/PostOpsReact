@@ -17,7 +17,7 @@ import { bindActionCreators } from 'redux'
 import RespStatus from './components/RespStatus'
 import RespHeaders from './components/RespHeaders'
 import RespBody from './components/RespBody'
-
+import ServerDownDialog from './components/ServerDownDialog'
 
 class Po02 extends Component{
   constructor(props){
@@ -35,8 +35,12 @@ class Po02 extends Component{
       bodytype: "Json",
       keyvalues: ["a", "b", "c"],
       bodyraw: "this is the raw body",
+      serverUp: false,
     }
+    this.startServerCheck();
   }
+  
+  
 setMethod = e=>{this.setState({method: e})}
 
 seturl = e=>{
@@ -77,6 +81,19 @@ setKeyValueArray = e=>{
 
 setBodyType = e=>{
   this.setState({bodytype: e});
+}
+
+setServerUp = e=>{
+  this.setState({serverUp: e});
+}
+
+checkServer = e=>{
+  httpC("tryserver").then(e=>{this.setState({serverUp: true})}, e=>{this.setState({serverUp: false})})
+}
+
+startServerCheck = e=>{
+  console.log("start server check");
+  setInterval(this.checkServer, 5000);
 }
 
 showRedux = e=>{
@@ -130,7 +147,7 @@ send = e=>{
   render(){
     return(
       <div>
-      <AppBarMenu/>
+      <AppBarMenu setServerUp={this.setServerUp}/>
         <div className="mdl-grid">
           <div className="mdl-cell--1-col">
           </div>
@@ -166,6 +183,7 @@ send = e=>{
             <RespHeaders value={this.state.respHeaders}/>
             <h4>Body</h4>
             <RespBody value={this.state.respBody}/>
+            <ServerDownDialog open={!this.state.serverUp}/>
 
           </div>
 {/*          <div className="mdl-cell--1-col">

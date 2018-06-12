@@ -9,10 +9,12 @@ import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 //import MenuIcon from '@material-ui/icons/Menu';
 //import Login from '@material-ui/icons/Login';
+import Help from '@material-ui/icons/Help';
 import Login from '../icons/Login';
 import Logout from '../icons/Logout';
 import LoginDialog from './LoginDialog';
 import RegisterDialog from './RegisterDialog';
+import HelpDialog from './HelpDialog'
 import { logInOut } from './Utils'
 import { httpC } from './Http'
 import { connect } from 'react-redux'
@@ -54,6 +56,8 @@ class MenuAppBar extends React.Component {
     
     showLoginMode: "login",
     loggedIn: false,
+    showLogin: false,
+    showHelp: false,
   };
   
   tryLogin = e=>{// use the saved useremail / password
@@ -73,11 +77,13 @@ class MenuAppBar extends React.Component {
 look for a stored auth header, try it
 if the auth fails, or there is none, then look for useremail / password credentials, and try those
 */    
+    httpC("tryserver").then(e=>{this.props.setServerUp(true)}, e=>{this.props.setServerUp(false)})
     let auth = logInOut("getauth");// get the auth header
 //    console.log("auth: " + auth);
     if(auth){
       httpC("checkauth", {auth: auth}).then(e=>{
         if (e.result === "ok"){
+//          console.log("got ok");
           this.setState({loggedIn: true});
         } else {// auth header failed
           this.tryLogin();
@@ -107,6 +113,7 @@ if the auth fails, or there is none, then look for useremail / password credenti
   }
   
   handleMenu = event => {
+    console.log(event.currentTarget);
     if (this.state.loggedIn){
       this.logOut() ;
     } else {
@@ -114,8 +121,28 @@ if the auth fails, or there is none, then look for useremail / password credenti
     }
     
   };
+  
+  showHelp = e=>{
+    console.log("show");
+    this.setState({showHelp: true, anchorEl: e.currentTarget});
+  }
+  
+  hideHelp = e=>{
+    this.setState({showHelp: false, anchorEl: null});
+  }
+
+  showLogin = e=>{
+    console.log("show");
+    this.setState({showLogin: true, anchorEl: e.currentTarget});
+  }
+
+  hideLogin = e=>{
+    console.log("hide");
+    this.setState({showLogin: false, anchorEl: null});
+  }
 
   handleClose = () => {
+    console.log("handle close");
     this.setState({ anchorEl: null });
   };
   
@@ -146,23 +173,30 @@ if the auth fails, or there is none, then look for useremail / password credenti
 
 
   render() {
-    const { classes } = this.props;
-    const { auth, anchorEl } = this.state;
-    const open = Boolean(anchorEl);
+//    const { classes } = this.props;
+//    const { auth, anchorEl } = this.state;
+    const open = this.state.showLogin; // Boolean(this.state.anchorEl); // 
 
     return (
-      <div className={classes.root}>
+      <div className={this.props.classes.root}>
         <AppBar position="static">
           <Toolbar>
-            <Typography variant="title" color="inherit" className={classes.flex}>
+            <Typography variant="title" color="inherit" className={this.props.classes.flex}>
               PostOps
             </Typography>
-            {auth && (
+                <IconButton
+                  aria-owns={null}
+                  onClick={this.showHelp}
+                  color="inherit"
+                >
+                  <Help/>
+                </IconButton>
+            {(
               <div>
                 <IconButton
                   aria-owns={open ? 'menu-appbar' : null}
                   aria-haspopup="true"
-                  onClick={this.handleMenu}
+                  onClick={this.showLogin}
                   color="inherit"
                 >
                   {this.state.loggedIn ? 
@@ -173,19 +207,24 @@ if the auth fails, or there is none, then look for useremail / password credenti
                 </IconButton>
 
         <Popover
-          open={Boolean(this.state.anchorEl)}
+          open={this.state.showHelp}
+          onClose={this.hideHelp}
           anchorEl={this.state.anchorEl}
-          anchorReference={this.state.anchorReference}
-          anchorPosition={{ top: this.state.positionTop, left: this.state.positionLeft }}
-          onClose={this.handleClose}
-          anchorOrigin={{
-            vertical: this.state.anchorOriginVertical,
-            horizontal: this.state.anchorOriginHorizontal,
-          }}
-          transformOrigin={{
-            vertical: this.state.transformOriginVertical,
-            horizontal: this.state.transformOriginHorizontal,
-          }}
+          anchorReference={"anchorEl"}
+          anchorPosition={{ top: 400, left: 600 }}
+          anchorOrigin={{ vertical: "bottom", horizontal: "right", }}
+          transformOrigin={{ vertical: "top", horizontal: "right", }}
+        >
+          <HelpDialog/>
+        </Popover>
+        <Popover
+          open={this.state.showLogin}
+          anchorEl={this.state.anchorEl}
+          anchorReference={"anchorEl"}
+          anchorPosition={{ top: 200, left: 400 }}
+          onClose={this.hideLogin}
+          anchorOrigin={{ vertical: "bottom", horizontal: "right", }}
+          transformOrigin={{ vertical: "top", horizontal: "right", }}
         >
           {this.state.showLoginMode === "login" ? 
             <LoginDialog setShowLogin={this.setShowLogin} close={this.closeLogin} setLoggedIn={this.setLoggedIn}/> : 

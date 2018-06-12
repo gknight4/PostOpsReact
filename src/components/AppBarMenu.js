@@ -8,8 +8,9 @@ import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 //import MenuIcon from '@material-ui/icons/Menu';
-import Login from '@material-ui/icons/Login';
-import Logout from '@material-ui/icons/Logout';
+//import Login from '@material-ui/icons/Login';
+import Login from '../icons/Login';
+import Logout from '../icons/Logout';
 import LoginDialog from './LoginDialog';
 import RegisterDialog from './RegisterDialog';
 import { logInOut } from './Utils'

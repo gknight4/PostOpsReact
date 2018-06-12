@@ -4,7 +4,7 @@ import MyDown from './MyDown'
 //const suggestions = ["apple", "pear", "orange", "grape", "banana"];
 
 const placeholder = "KeyValue";
-const id = "integration-downshift-simple-form" ;
+//const id = "integration-downshift-simple-form" ;
 const name = "url";
 
 class KeyValueArray extends Component{

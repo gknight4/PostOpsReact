@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import KeyValueDown from './KeyValueDown'
+//import { setDebugThis } from './Utils'
 
 //const suggestions = ["apple", "pear", "orange", "grape", "banana"];
 
@@ -11,11 +12,17 @@ const name = "url";
 class HeaderArray extends Component{
   constructor(props){
     super(props);
-    console.log(props);
+//    setDebugThis(this);
+//    console.log(props);
 //    console.log("construct");
     this.state = {
       headers: this.props.headers,
     }
+  }
+  
+  debugShowSuggestionProps = e=>{
+    console.log("suggestions from headerArray");
+    console.log(this.props.suggestions) ;
   }
   
   setHeader = (e) => {

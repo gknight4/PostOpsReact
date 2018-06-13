@@ -70,6 +70,8 @@ renderInput ( {getInputProps, closeMenu, inputValue, selectedItem, label} ) {
 }
 
 getSuggestions(inputValue) {
+//  console.log(this.props.suggestions);
+  if (this.props.suggestions == null){ return []}
   let count = 0;
   let ret = this.props.suggestions.filter(suggestion => {
     const keep =

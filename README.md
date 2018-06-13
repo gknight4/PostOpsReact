@@ -16,25 +16,36 @@ implement Angular frontend\
 protect from too many login attempts\
 check common passwords\
 check for username used\
-allow for 'proxy' mode that usese the server to make the request, so that we get all the headers\
+allow for 'proxy' mode that uses the server to make the request, so that we get all the headers\
 add expire to jwt\
 do automatic login if jwt has expired\
 implement Forgot Password\
 reformat for mobile screen\
 save *entire* messages: method, url, headers, body, and be able to re-select\
-add "send new StringStore" when the strings need to be trimmed\
+add "send new StringStore" when the string list needs to be trimmed\
 add Init Suggestions for new users\
 remove 'SEQ' from accounts\
-need to load stringstore after successful login
+need to load stringstore after successful login\
+erase StringStore on logout\
+add Alert if sending PostOp without login\
 
 Bugs
-Headers: "cannot read property 'filter'
-Login dialog doesn't close on successful login
-components are rendering before Redux store is initialized from the server - each component maintains its own state, with is *initialized* by the props. but, when the props update from Redux store, the state does *not*.
-
 
 
 Changelog:
+
+Version: 0.1.6
+
+former Issues:
+pass string data to components in props, rather than storing in component state - not a problem, after all\
+components are rendering before Redux store is initialized from the server - each component maintains its \
+own state, with is *initialized* by the props. but, when the props update from Redux store, the state does \
+*not*. - actually, not happening\
+"logout" function not working - shows login dialog again\
+Login dialog doesn't close on successful login\
+don't update StringStore if not logged in\
+Headers: "cannot read property 'filter'\
+components behaving badly with new user, with empty StringStore\
 
 Version: 0.1.5
 

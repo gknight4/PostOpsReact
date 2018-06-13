@@ -20,6 +20,7 @@ import { httpC, PostOpsRequest } from './components/Http'
 import { addStringStores } from './components/StringStores'
 import { setHeaders, setUrls, setForms, setJsons, setRaws, setSeq, setDebug } from './account'
 import ServerDownDialog from './components/ServerDownDialog'
+//import { getDebugThis } from './components/Utils'
 
 class Po02 extends Component{
   constructor(props){
@@ -38,7 +39,9 @@ class Po02 extends Component{
       respBody: "",
         
       serverUp: false,
+      loggedIn: false,
     }
+//    console.log("po02") ;
     this.startServerCheck();
     props.setDebug(true);
   }
@@ -77,17 +80,20 @@ setKeyValueArray = e=>{this.setState({forms: e});}
 setBodyType = e=>{this.setState({bodytype: e});}
 
 setServerUp = e=>{this.setState({serverUp: e});}
+setLoggedIn = e=>{this.setState({loggedIn: e});}
 
 checkServer = e=>{
   httpC("tryserver").then(e=>{this.setState({serverUp: true})}, e=>{this.setState({serverUp: false})})
 }
 
 startServerCheck = e=>{
-  console.log("start server check");
+//  console.log("start server check");
   setInterval(this.checkServer, 5000);
 }
 
 showRedux = e=>{
+//  console.log(this.props.headers);
+//  getDebugThis().debugShowSuggestionProps();
   console.log(store.getState());
   
 }
@@ -96,7 +102,7 @@ addStringStore = e=>{
   
   // send an array of strings with types
 //  console.log("add strsto");
-  httpC("addstrsto", [{type: "header", text: "this: is another it"}, {type: "header", text: "this: is and still it"}, ]);
+    httpC("addstrsto", [{type: "header", text: "this: is another it"}, {type: "header", text: "this: is and still it"}, ]);
 }
 
 getStringStores = e=>{
@@ -112,20 +118,21 @@ setStringStores = e=>{
 }
 
 sendCurrentStrings = e=>{
-  let strings = Object.assign({}, {headers: this.state.headers}, {urls: this.state.url}, 
-    {jsons: this.state.jsons}, {forms: this.state.forms}, {raw: this.state.bodyraw}, {bodytype: this.state.bodytype},
-    {method: this.state.method}
-                             );
-  addStringStores(this.props, strings);
-  PostOpsRequest(strings).then(r=>{
-    this.setState({
-      respStatus: r.status,
-      respHeaders: r.headers,
-      respBody: r.body,
-    }) ;
-    console.log(r)
-  });
-//  console.log(strings);
+  if(this.state.loggedIn){
+    let strings = Object.assign({}, {headers: this.state.headers}, {urls: this.state.url}, 
+      {jsons: this.state.jsons}, {forms: this.state.forms}, {raw: this.state.bodyraw}, {bodytype: this.state.bodytype},
+      {method: this.state.method}
+                              );
+    addStringStores(this.props, strings);
+  //  console.log(strings);
+      PostOpsRequest(strings).then(r=>{
+        this.setState({
+          respStatus: r.status,
+          respHeaders: r.headers,
+          respBody: r.body,
+        }) ;
+      });
+  }
 }
 
 send = e=>{
@@ -138,7 +145,7 @@ send = e=>{
   render(){
     return(
       <div>
-      <AppBarMenu setServerUp={this.setServerUp}/>
+      <AppBarMenu setServerUp={this.setServerUp} setLoggedIn={this.setLoggedIn}/>
         <div className="mdl-grid">
           <div className="mdl-cell--1-col">
           </div>

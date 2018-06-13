@@ -60,13 +60,13 @@ function checkAuth (params){// this is the first attempt to contact the server
 }
 
 function addStringStore(params){
-//  console.log("add strsto2");
+  console.log("add strsto2");
 //  console.log(params);
   return new Promise((res, rej)=>{
     let url = baseUrl + "/auth/stringstore" ;
     let httpObj = po ("POST", JSON.stringify(params)) ;
     httpObj.headers['Authorization'] = sessionStorage.getItem("auth");
-    console.log(httpObj);
+//    console.log(httpObj);
     return fetch(url, httpObj).then(response => response.json().then(resp=>{ res(resp); }), e=>{rej(e)});
   })
 }

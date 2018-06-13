@@ -124,9 +124,17 @@ if the auth fails, or there is none, then look for useremail / password credenti
     } else {
       this.setState({ anchorEl: event.currentTarget });
     }
-    
   };
   
+  handleLoginLogout = e=>{
+    console.log("show");
+    if (this.state.loggedIn){
+      this.logOut() ;
+    } else {
+      this.setState({showLogin: true, anchorEl: e.currentTarget});
+    }
+  }
+
   showHelp = e=>{
     console.log("show");
     this.setState({showHelp: true, anchorEl: e.currentTarget});
@@ -134,11 +142,6 @@ if the auth fails, or there is none, then look for useremail / password credenti
   
   hideHelp = e=>{
     this.setState({showHelp: false, anchorEl: null});
-  }
-
-  showLogin = e=>{
-    console.log("show");
-    this.setState({showLogin: true, anchorEl: e.currentTarget});
   }
 
   hideLogin = e=>{
@@ -169,6 +172,7 @@ if the auth fails, or there is none, then look for useremail / password credenti
   setLoggedIn = e=>{
 //    console.log("set login: " + e);
     this.setState({loggedIn: e});
+    this.props.setLoggedIn(e);
   }
   
   closeLogin = e=>{
@@ -201,7 +205,7 @@ if the auth fails, or there is none, then look for useremail / password credenti
                 <IconButton
                   aria-owns={open ? 'menu-appbar' : null}
                   aria-haspopup="true"
-                  onClick={this.showLogin}
+                  onClick={this.handleLoginLogout}
                   color="inherit"
                 >
                   {this.state.loggedIn ? 
@@ -232,7 +236,7 @@ if the auth fails, or there is none, then look for useremail / password credenti
           transformOrigin={{ vertical: "top", horizontal: "right", }}
         >
           {this.state.showLoginMode === "login" ? 
-            <LoginDialog setShowLogin={this.setShowLogin} close={this.closeLogin} setLoggedIn={this.setLoggedIn}/> : 
+            <LoginDialog setShowLogin={this.setShowLogin} close={this.hideLogin} setLoggedIn={this.setLoggedIn}/> : 
             <RegisterDialog setShowLogin={this.setShowLogin} close={this.closeLogin}/> }
         </Popover>
                 

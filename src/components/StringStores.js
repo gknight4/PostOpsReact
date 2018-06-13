@@ -36,13 +36,14 @@ function processStringStores(e, props){
 }
 
 function loadStringStores(props){
-  console.log("load stringstores");
+//  console.log("load stringstores");
     httpC("getstrstos", {type: "header"}).then(e=>{
       processStringStores(e, props);
     });
 }
 
 function checkDups(newString, oldList){
+  if (oldList == null) return false ;
   let dup = false ;
   oldList.forEach(e=>{
 //    console.log("cd: " + e + ", " + newString + ", " + (e === newString));
@@ -95,14 +96,22 @@ function removeOldStrings (props, sendStrings){
 //   console.log ("done");
 }
 
+function safeCopyArray(arr){
+  if(arr == null){
+    return [] ;
+  } else {
+    return arr.slice(0) ;
+  }
+}
+
 function addRemainingStrings (props, sendStrings){
 //  console.log("add remaining") ;
 //  console.log(props);
-  let headers = props.headers.slice(0);
-  let urls = props.urls.slice(0);
-  let jsons = props.jsons.slice(0);
-  let forms = props.forms.slice(0);
-  let raws = props.raws.slice(0);
+  let headers = safeCopyArray(props.headers) ; // props.headers.slice(0);
+  let urls = safeCopyArray(props.urls) ; // props.urls.slice(0);
+  let jsons = safeCopyArray(props.jsons) ; // props.jsons.slice(0);
+  let forms = safeCopyArray(props.forms) ; // props.forms.slice(0);
+  let raws = safeCopyArray(props.raws) ; // props.raws.slice(0);
   sendStrings.forEach(e=>{
     switch(e.type){
       case "header":
@@ -142,6 +151,7 @@ sendStrings is an array of all those strings, with "type" of string
 //  console.log("from redux:") ;
 //  console.log(props.headers);
 //  console.log(strings);
+  console.log(props);
   let sendStrings = [] ;
   sendStrings.push({type: "url", text: strings.urls});
   strings.headers.forEach(e=>{ if (e !== "") sendStrings.push({type: "header", text: e}) }) ;

@@ -1,3 +1,4 @@
+
 function logInOut (type, params){
   switch (type){
     case "login":
@@ -24,4 +25,8 @@ function logInOut (type, params){
   }
 }
 
-export { logInOut }
+var debugThis = null ;
+function setDebugThis (val) {debugThis = val} ;
+function getDebugThis () {return debugThis} ;
+
+export { logInOut, setDebugThis, getDebugThis }

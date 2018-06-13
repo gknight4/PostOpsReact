@@ -20,6 +20,7 @@ const po = function (method, body){
 
 function register (params){
   return new Promise((res, rej)=>{
+    console.log(params);
 //    params.password = SHA256(params.password).toString();
     let url = baseUrl + "/open/users" ;
     let httpObj = po ("POST", JSON.stringify(params)) ;
@@ -33,13 +34,13 @@ function tryServer(){
 }
 
 function login (params){
-  console.log("login");
+//  console.log("login");
   return new Promise((res, rej)=>{
     let httpObj = po ("GET", "") ;
     let url = baseUrl + "/open/authenticate/" + params.useremail + "/" + params.password ;
     return fetch(url, httpObj).then(response => response.json().then(resp=>{
       resp.header = response.headers.get("Authorization") ;
-      console.log(resp.header);
+//      console.log(resp.header);
       res(resp); 
     }));
   })
@@ -132,10 +133,11 @@ function getJsonObj(jsons){
     if (v !== ""){
       prop = keyValSep(v) ;
       sep = isNaN(prop.val) ? "\"" : "" ;
-      obj += "    \"" + prop.key + "\": " + sep + prop.val + sep + "\n" ;
+      obj += "    \"" + prop.key + "\": " + sep + prop.val + sep + ",\n" ;
     }
   });
-  obj += "}" ;
+  obj = obj.substr(0, obj.length - 2) + "\n}" ;
+//  obj += "}" ;
   //console.log(obj) ;
   return obj ;
 }
@@ -177,6 +179,7 @@ function processResponse(response, body){
 }
 
 function PostOpsRequest (strings){
+//  console.log("post ops");
   return new Promise((res, rej)=>{
     let url = strings.urls ;
     var body = ""
@@ -195,14 +198,19 @@ function PostOpsRequest (strings){
           break ;
       }
     }
-//    console.log(body) ;
+//    console.log("body: " + body) ;
     let httpObj = po (strings.method, body) ;
     httpObj.headers = {"user-agent": "Mozilla/4.0 MDN Example"}
     addHeaders (httpObj, strings.headers) ;
+//    httpObj.mode = "no-cors" ;
+    
 //    console.log(httpObj);
+//    return fetch(url, httpObj).then(r => {console.log(r)}) ;
 //    httpObj.headers['Authorization'] = sessionStorage.getItem("auth");
     return fetch(url, httpObj).then(response => {
       response.text().then(r=>{
+//        console.log("response text") ;
+//        console.log(response);
         res(processResponse(response, r));
       });
     }) ;

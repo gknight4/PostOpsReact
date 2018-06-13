@@ -20,7 +20,7 @@ import { httpC } from './Http'
 import { connect } from 'react-redux'
 import { setHeaders, setUrls, setForms, setJsons, setRaws, setSeq } from '../account'
 import { bindActionCreators } from 'redux'
-import { loadStringStores } from './StringStores'
+import { loadStringStores, eraseStringStores } from './StringStores'
 
 const styles = {
   root: {
@@ -58,18 +58,18 @@ class MenuAppBar extends React.Component {
     showHelp: false,
   };
   
-  finishLogin = e=>{
-    this.setState({loggedIn: true});
-    loadStringStores(this.props);
+//  finishLogin = e=>{
+//    this.setState({loggedIn: true});
+//    loadStringStores(this.props);
 //    console.log("load strings") ;
-  }
+//  }
   
   tryLogin = e=>{// use the saved useremail / password
       let params = logInOut("getlogin");
       if (params.useremail && params.password){
         httpC("login", params).then(e=>{
           if (e.result === "ok"){
-            this.finishLogin();
+            this.setLoggedIn();
             logInOut("login", {auth: e.header});
           }
         });
@@ -88,7 +88,7 @@ if the auth fails, or there is none, then look for useremail / password credenti
       httpC("checkauth", {auth: auth}).then(e=>{
         if (e.result === "ok"){
 //          console.log("got ok");
-          this.finishLogin();
+          this.setLoggedIn();
 //          this.setState({loggedIn: true}, this.loadSS);
         } else {// auth header failed
           this.tryLogin();
@@ -112,22 +112,17 @@ if the auth fails, or there is none, then look for useremail / password credenti
     this.setState({ auth: checked });
   };
 
-  logOut = e=>{
-    logInOut("logout");
-    this.setState({loggedIn: false});
-  }
-  
-  handleMenu = event => {
-    console.log(event.currentTarget);
-    if (this.state.loggedIn){
-      this.logOut() ;
-    } else {
-      this.setState({ anchorEl: event.currentTarget });
-    }
-  };
+//  handleMenu = event => {
+//    console.log(event.currentTarget);
+//    if (this.state.loggedIn){
+//      this.logOut() ;
+//    } else {
+//      this.setState({ anchorEl: event.currentTarget });
+//    }
+//  };
   
   handleLoginLogout = e=>{
-    console.log("show");
+//    console.log("show");
     if (this.state.loggedIn){
       this.logOut() ;
     } else {
@@ -136,7 +131,7 @@ if the auth fails, or there is none, then look for useremail / password credenti
   }
 
   showHelp = e=>{
-    console.log("show");
+//    console.log("show");
     this.setState({showHelp: true, anchorEl: e.currentTarget});
   }
   
@@ -145,38 +140,47 @@ if the auth fails, or there is none, then look for useremail / password credenti
   }
 
   hideLogin = e=>{
-    console.log("hide");
+//    console.log("hide");
     this.setState({showLogin: false, anchorEl: null});
   }
 
-  handleClose = () => {
-    console.log("handle close");
-    this.setState({ anchorEl: null });
-  };
+  //handleClose = () => {
+  //  console.log("handle close");
+  //  this.setState({ anchorEl: null });
+  //};
   
-    handleClickButton = () => {
-      console.log("open");
-    this.setState({
-      open: true,
-    });
-  };
+//    handleClickButton = () => {
+//      console.log("open");
+//    this.setState({
+//      open: true,
+//    });
+//  };
   
-  popoverClick = e=>{
-    console.log("click");
-  }
+//  popoverClick = e=>{
+//    console.log("click");
+//  }
   
   setShowLogin = e=>{
     this.setState({showLoginMode: e}) ;
   }
   
-  setLoggedIn = e=>{
-//    console.log("set login: " + e);
-    this.setState({loggedIn: e});
-    this.props.setLoggedIn(e);
+  setLoggedIn = e=>{// called from the LoginDialog, tryLogin, and checkLogin
+//    console.log("set login: " + true);
+    this.setState({loggedIn: true});
+    this.props.setLoggedIn(true);
+    loadStringStores(this.props);
   }
   
-  closeLogin = e=>{
+  logOut = e=>{
+    logInOut("logout");
+    this.setState({loggedIn: false});
+    this.props.setLoggedIn(false);
+    eraseStringStores(this.props);
+  }
+  
+closeLogin = e=>{
     this.setState({anchorEl: null}) ;
+
   }
 
 

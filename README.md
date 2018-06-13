@@ -15,6 +15,8 @@ implement Python backend\
 implement Angular frontend\
 protect from too many login attempts\
 check common passwords\
+validate passwords\
+validate email address\
 check for username used\
 allow for 'proxy' mode that uses the server to make the request, so that we get all the headers\
 add expire to jwt\
@@ -25,14 +27,25 @@ save *entire* messages: method, url, headers, body, and be able to re-select\
 add "send new StringStore" when the string list needs to be trimmed\
 add Init Suggestions for new users\
 remove 'SEQ' from accounts\
-need to load stringstore after successful login\
-erase StringStore on logout\
-add Alert if sending PostOp without login\
+make email address *not* case sensitive\
 
 Bugs
 
 
 Changelog:
+
+Version: 0.1.7
+
+Implement Help system for a walkthrough of PostOps
+Deploy to PostOps.us
+
+former Issues:
+add Alert if sending PostOp without login\
+need to load stringstore after successful login\
+from AppBarMenu, remove handleClose, handleClickButton, popoverClick,  handleMenu\
+remove temporary "user email in use" alert\
+erase StringStore on logout\
+
 
 Version: 0.1.6
 

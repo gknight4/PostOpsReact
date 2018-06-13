@@ -15,7 +15,7 @@ class RegisterDialog extends Component{
       email: "",
       password: "",
       showPass: false,
-      userEmailAlert: "warning: That User Email is in use",
+      userEmailAlert: "", // warning: That User Email is in use
       registrationAlert: "",
     }
   }
@@ -43,7 +43,8 @@ class RegisterDialog extends Component{
   
   doRegister = e=>{
     let hash = SHA256(this.state.password).toString();
-    httpC("register", {useremail: this.state.email, password: hash}).then(e=>{
+    let email = encodeURI(this.state.email);
+    httpC("register", {useremail: email, password: hash}).then(e=>{
       if (e.result === "ok")
         this.setState({registrationAlert: "success: You're Registered!"}) ;
       else

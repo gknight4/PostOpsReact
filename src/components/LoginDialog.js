@@ -59,12 +59,13 @@ class LoginDialog extends Component{
 //    console.log("log 1");
     if ((this.state.email !== "") && (this.state.password !== "")){
       let hash = SHA256(this.state.password).toString();
-      httpC("login", {useremail: this.state.email, password: hash}).then(r=>{
+      let email = encodeURI(this.state.email);
+      httpC("login", {useremail: email, password: hash}).then(r=>{
         if(r.result === "ok"){
 //          console.log("loggin");
           logInOut("login", {auth: r.header});// save the auth header
           this.props.setJwt(r.header);
-          if (this.state.rememberMe) logInOut("rememberme", {useremail: this.state.email, password: hash});
+          if (this.state.rememberMe) logInOut("rememberme", {useremail: email, password: hash});
           this.props.close();
           this.props.setLoggedIn(true);
         } else {

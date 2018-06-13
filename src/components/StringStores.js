@@ -1,9 +1,28 @@
 import { httpC } from './Http'
 
+function initStringStores(props){
+  props.setHeaders([
+    "content-type: application/json",
+    "authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHBpcmUiOiIyMDE4LTA2LTEzVDEwOjE2OjU2LjE4MTcyMTI5OC0wNzowMCIsImZsYWdzIjoxLCJpZCI6IjViMjE0NzUwMDE5MTRmMjQ5OWY4MDAwYiJ9.Lh8a-2M4puO5z-KNm6XTuKs2gyrmpZcDYZ3Ah0JQRrQ    ",
+  ]);// save to Redux
+  props.setUrls([
+    "http://localhost:6026/open/users",
+    "http://localhost:6026/open/authenticate/bob@me.com/edea01c16b2d3c55694cb68967b344ee548d4a9a9ca3612fcf569e6ae93e0802",
+    "http://localhost:6026/auth/stringstore"
+  ]);
+  props.setForms([]);
+  props.setJsons(["useremail: bob@me.com", "password: edea01c16b2d3c55694cb68967b344ee548d4a9a9ca3612fcf569e6ae93e0802"]); // theDuck0! hash
+  props.setRaws([]);
+  props.setSeq(0);
+}
+
 function processStringStores(e, props){
 //  console.log(e) ;
 //  console.log(props) ;
-  if (e == null) return ;
+  if (e == null) {
+    initStringStores(props);
+    return ;
+  }
   let headers = [], urls = [], forms = [], jsons = [], raws = [] ;
   for(let i = 0 ; i < e.length ; i++){
     switch (e[i].type){
@@ -32,6 +51,15 @@ function processStringStores(e, props){
   props.setForms(forms);
   props.setJsons(jsons);
   props.setRaws(raws);
+  props.setSeq(0);
+}
+
+function eraseStringStores(props){
+  props.setHeaders([]);// save to Redux
+  props.setUrls([]);
+  props.setForms([]);
+  props.setJsons([]);
+  props.setRaws([]);
   props.setSeq(0);
 }
 
@@ -151,7 +179,7 @@ sendStrings is an array of all those strings, with "type" of string
 //  console.log("from redux:") ;
 //  console.log(props.headers);
 //  console.log(strings);
-  console.log(props);
+//  console.log(props);
   let sendStrings = [] ;
   sendStrings.push({type: "url", text: strings.urls});
   strings.headers.forEach(e=>{ if (e !== "") sendStrings.push({type: "header", text: e}) }) ;
@@ -179,4 +207,4 @@ sendStrings is an array of all those strings, with "type" of string
 //  console.log(sendStrings);
 }
 
-export { loadStringStores, addStringStores };
+export { loadStringStores, addStringStores, eraseStringStores };

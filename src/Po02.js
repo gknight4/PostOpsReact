@@ -20,6 +20,7 @@ import { httpC, PostOpsRequest } from './components/Http'
 import { addStringStores } from './components/StringStores'
 import { setHeaders, setUrls, setForms, setJsons, setRaws, setSeq, setDebug } from './account'
 import ServerDownDialog from './components/ServerDownDialog'
+import Alert from './components/Alert'
 //import { getDebugThis } from './components/Utils'
 
 class Po02 extends Component{
@@ -40,10 +41,17 @@ class Po02 extends Component{
         
       serverUp: false,
       loggedIn: false,
+      sendErrorAlert: "",
     }
 //    console.log("po02") ;
     this.startServerCheck();
-    props.setDebug(true);
+    props.setDebug(false);
+//    window.po02.self = this ;
+//    console.log(window);
+  }
+  
+  testThis = e=>{
+    console.log("got po02 this!");
   }
   
   
@@ -80,7 +88,11 @@ setKeyValueArray = e=>{this.setState({forms: e});}
 setBodyType = e=>{this.setState({bodytype: e});}
 
 setServerUp = e=>{this.setState({serverUp: e});}
-setLoggedIn = e=>{this.setState({loggedIn: e});}
+
+setLoggedIn = e=>{
+  if(e) this.setState({sendErrorAlert: ""});
+  this.setState({loggedIn: e});
+}
 
 checkServer = e=>{
   httpC("tryserver").then(e=>{this.setState({serverUp: true})}, e=>{this.setState({serverUp: false})})
@@ -137,7 +149,11 @@ sendCurrentStrings = e=>{
 
 send = e=>{
 //  console.log("send");
-  this.sendCurrentStrings();
+  if(this.state.loggedIn){
+    this.sendCurrentStrings();
+  } else {
+    this.setState({sendErrorAlert: "warning: You can only send PostOps if you're Registered, and Logged In"});
+  }
 //        store.dispatch(setJwt("first one"));
   
 }
@@ -168,6 +184,7 @@ send = e=>{
               : null}
             <div style={{height: 20}}/>
             <Button variant="contained" color="primary" onClick={this.send}>Send</Button>
+            {this.state.sendErrorAlert !== "" && <Alert>{this.state.sendErrorAlert}</Alert>}
             {this.props.debug ?
             <div><Button variant="contained" color="secondary" onClick={this.showRedux}>Show</Button></div>
             : null}

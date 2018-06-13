@@ -7,6 +7,7 @@ const SET_FORMS = 'setForms'
 const SET_JSONS = 'setJsons'
 const SET_RAWS = 'setRaws'
 const SET_SEQ = 'setSeq'
+const SET_DEBUG = 'setDebug'
 
 
 const reducer = (state = {}, action) => {
@@ -27,6 +28,8 @@ const reducer = (state = {}, action) => {
       return Object.assign({}, state, { raws: action.raws });
     case SET_SEQ:
       return Object.assign({}, state, { seq: action.seq });
+    case SET_DEBUG:
+      return Object.assign({}, state, { debug: action.debug });
     default:
       return state
   }
@@ -42,8 +45,9 @@ const setForms = forms => ({ type: SET_FORMS, forms })
 const setJsons = jsons => ({ type: SET_JSONS, jsons })
 const setRaws = raws => ({ type: SET_RAWS, raws })
 const setSeq = seq => ({ type: SET_SEQ, seq })
+const setDebug = debug => ({ type: SET_DEBUG, debug })
 
 export const load = data => ({ type: LOAD, data })
-export { setJwt, setHeaders, setUrls, setForms, setJsons, setRaws, setSeq }
+export { setJwt, setHeaders, setUrls, setForms, setJsons, setRaws, setSeq, setDebug }
 
 export default reducer

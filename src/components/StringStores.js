@@ -1,6 +1,8 @@
 import { httpC } from './Http'
 
 function processStringStores(e, props){
+//  console.log(e) ;
+//  console.log(props) ;
   if (e == null) return ;
   let headers = [], urls = [], forms = [], jsons = [], raws = [] ;
   for(let i = 0 ; i < e.length ; i++){
@@ -34,11 +36,9 @@ function processStringStores(e, props){
 }
 
 function loadStringStores(props){
-  
+  console.log("load stringstores");
     httpC("getstrstos", {type: "header"}).then(e=>{
-//      console.log(e) ;
       processStringStores(e, props);
-//      props.setHeaders(e);
     });
 }
 

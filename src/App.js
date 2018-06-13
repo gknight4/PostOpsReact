@@ -72,6 +72,9 @@ register
 login
 check authentication
 
+forgot password
+send an email with a rest link
+
 Release Notes:
 
 version: 0.1.5:
@@ -90,5 +93,36 @@ reformat for mobile screen
 save *entire* messages: method, url, headers, body, and be able to re-select
 remove sample data from Po02 State
 implement help system
+
+program structure:
+
+public/index.html
+defines 'root' div
+
+src/index.js
+renders App, to 'root' div
+runs registerServiceWorker
+
+src/App.js
+runs redux Provider
+defines reducer, store, and a simple showResults
+render Po02
+
+src/Poo2.js
+the main component
+state stores method, url, headers, bodyType, forms, jsons, keyvalues, bodyraw, respStatus, respHeades, respBody, and serverUp
+
+These components are used to render the form that describes the Post Request:
+UrlInput, MethodSelect, HeaderArray, BodyTypeSelect, BodyKeyValue, BodyRaw, RespStatus, RespHeaders, RespBody
+Each component maintains the state of the form input in its *own* state, and updates the state of Po02 when it changes, using these methods:
+setMethod, setUrl, setHeader, setKeyVAlue, setJson, setJsonArray, setHeaderArray, setKeyValueArray, setBodyType, 
+
+Po02 also monitors the server availability, and will shut down the page with the ServerDownDialog if the ReST server becomes unavailable
+
+There are a number of debugging routines here, to put the StringStore on the server through its paces:
+addStringStore, getStringStores, setStringStores, sendCurrentStrings
+
+Po02 uses connect to make the Redux store and actions available from props
+
 
 */

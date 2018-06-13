@@ -11,6 +11,7 @@ const name = "url";
 class HeaderArray extends Component{
   constructor(props){
     super(props);
+    console.log(props);
 //    console.log("construct");
     this.state = {
       headers: this.props.headers,

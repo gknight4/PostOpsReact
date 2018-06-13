@@ -39,8 +39,6 @@ class MenuAppBar extends React.Component {
   constructor(props){
     super(props);
     this.checkLogin();
-//    console.log("loading");
-    if(this.state.loggedIn) loadStringStores(props);
   }
   state = {
     auth: true,
@@ -60,12 +58,18 @@ class MenuAppBar extends React.Component {
     showHelp: false,
   };
   
+  finishLogin = e=>{
+    this.setState({loggedIn: true});
+    loadStringStores(this.props);
+//    console.log("load strings") ;
+  }
+  
   tryLogin = e=>{// use the saved useremail / password
       let params = logInOut("getlogin");
       if (params.useremail && params.password){
         httpC("login", params).then(e=>{
           if (e.result === "ok"){
-            this.setState({loggedIn: true});
+            this.finishLogin();
             logInOut("login", {auth: e.header});
           }
         });
@@ -84,7 +88,8 @@ if the auth fails, or there is none, then look for useremail / password credenti
       httpC("checkauth", {auth: auth}).then(e=>{
         if (e.result === "ok"){
 //          console.log("got ok");
-          this.setState({loggedIn: true});
+          this.finishLogin();
+//          this.setState({loggedIn: true}, this.loadSS);
         } else {// auth header failed
           this.tryLogin();
         }

@@ -1,22 +1,24 @@
 import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+
+import AppBarMenu from './components/AppBarMenu'
+
 import UrlInput from './components/UrlInput'
-import MehodSelect from './components/MethodSelect'
+import MethodSelect from './components/MethodSelect'
 import HeaderArray from './components/HeaderArray'
 import BodyTypeSelect from './components/BodyTypeSelect'
 import BodyKeyValue from './components/BodyKeyValue'
-//import BodyJSON from './components/BodyJSON'
 import BodyRaw from './components/BodyRaw'
-import AppBarMenu from './components/AppBarMenu'
-import { store } from './App'
-import { httpC, PostOpsRequest } from './components/Http'
-import { addStringStores } from './components/StringStores'
-import { connect } from 'react-redux'
-import { setHeaders, setUrls, setForms, setJsons, setRaws, setSeq } from './account'
-import { bindActionCreators } from 'redux'
 import RespStatus from './components/RespStatus'
 import RespHeaders from './components/RespHeaders'
 import RespBody from './components/RespBody'
+
+import { store } from './App'
+import { httpC, PostOpsRequest } from './components/Http'
+import { addStringStores } from './components/StringStores'
+import { setHeaders, setUrls, setForms, setJsons, setRaws, setSeq, setDebug } from './account'
 import ServerDownDialog from './components/ServerDownDialog'
 
 class Po02 extends Component{
@@ -24,28 +26,27 @@ class Po02 extends Component{
     super(props);
     this.state={
       method: "GET",
-      url: "http://localhost:6026/open/authenticate/gene/pinon",
-      headers: ["Content-Type: application/json"],
-      forms: ["four: will", "five: be", "six: the day"],
-      jsons: ["useremail: gene", "password: pinon"],
-      respStatus: 200,
-      respHeaders: ["one", "two", "three"],
-      respBody: "the body",
-        
+      url: "",
+      headers: [],
       bodytype: "Json",
-      keyvalues: ["a", "b", "c"],
-      bodyraw: "this is the raw body",
+      forms: [],
+      jsons: [],
+      keyvalues: [],
+      bodyraw: "",
+      respStatus: 0,
+      respHeaders: [],
+      respBody: "",
+        
       serverUp: false,
     }
     this.startServerCheck();
+    props.setDebug(true);
   }
   
   
 setMethod = e=>{this.setState({method: e})}
 
-seturl = e=>{
-  this.setState({url: e.value});
-}
+seturl = e=>{this.setState({url: e.value});}
 
 setHeader = e=>{
   let headers = this.state.headers ;
@@ -67,25 +68,15 @@ setJson = e=>{
   this.setState({jsons: jsons});
 }
 
-setJsonArray = e=>{
-  this.setState({jsons: e});
-}
+setJsonArray = e=>{this.setState({jsons: e});}
 
-setHeaderArray = e=>{
-  this.setState({headers: e});
-}
+setHeaderArray = e=>{this.setState({headers: e});}
 
-setKeyValueArray = e=>{
-  this.setState({forms: e});
-}
+setKeyValueArray = e=>{this.setState({forms: e});}
 
-setBodyType = e=>{
-  this.setState({bodytype: e});
-}
+setBodyType = e=>{this.setState({bodytype: e});}
 
-setServerUp = e=>{
-  this.setState({serverUp: e});
-}
+setServerUp = e=>{this.setState({serverUp: e});}
 
 checkServer = e=>{
   httpC("tryserver").then(e=>{this.setState({serverUp: true})}, e=>{this.setState({serverUp: false})})
@@ -114,7 +105,7 @@ getStringStores = e=>{
 }
 
 setStringStores = e=>{
-  // send the whole array of strings with types
+  // send the whole array of test strings with types
 //  let headers = {headers: ["one", "two", "three"]} ;
   let strstos = {type: "header", strings: [{text: "one", type: "url"}, {text: "two", type: "header"}, {text: "three", type: "json"}, ]} ;
   httpC("setstrstos", strstos) ;
@@ -152,7 +143,7 @@ send = e=>{
           <div className="mdl-cell--1-col">
           </div>
           <div style={{padding: 20}} className="mdl-cell--4-col">
-            <MehodSelect initialValue={this.state.method} setValue={this.setMethod}/>
+            <MethodSelect initialValue={this.state.method} setValue={this.setMethod}/>
             <div style={{height: 20}}/>
             <UrlInput suggestions={this.props.urls} inputValue={this.state.url} setValue={this.seturl}/>
             <h4>Headers</h4>
@@ -170,6 +161,9 @@ send = e=>{
               : null}
             <div style={{height: 20}}/>
             <Button variant="contained" color="primary" onClick={this.send}>Send</Button>
+            {this.props.debug ?
+            <div><Button variant="contained" color="secondary" onClick={this.showRedux}>Show</Button></div>
+            : null}
             <hr/>
             
 {/*            <div><Button variant="contained" color="secondary" onClick={this.showRedux}>Show</Button></div>
@@ -209,7 +203,7 @@ send = e=>{
 //Po02a = connect(state => ({headerArray: formValueSelector('po02')(state, 'headers')}))(Po02a)
 
 let Po02a = connect((state) => (state.account),
-  dispatch => bindActionCreators({setHeaders, setUrls, setForms, setJsons, setRaws, setSeq}, dispatch)
+  dispatch => bindActionCreators({setHeaders, setUrls, setForms, setJsons, setRaws, setSeq, setDebug}, dispatch)
   
 )(Po02)
 

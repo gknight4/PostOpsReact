@@ -12,6 +12,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Help from '@material-ui/icons/Help';
 import Login from '../icons/Login';
 import Logout from '../icons/Logout';
+import Bug from '../icons/Bug';
 import LoginDialog from './LoginDialog';
 import RegisterDialog from './RegisterDialog';
 import HelpDialog from './HelpDialog'
@@ -21,6 +22,8 @@ import { connect } from 'react-redux'
 import { setHeaders, setUrls, setForms, setJsons, setRaws, setSeq } from '../account'
 import { bindActionCreators } from 'redux'
 import { loadStringStores, eraseStringStores } from './StringStores'
+//import { debugText, lo } from './Utils'
+import DebugDialog from './Debug'
 
 const styles = {
   root: {
@@ -56,6 +59,7 @@ class MenuAppBar extends React.Component {
     loggedIn: false,
     showLogin: false,
     showHelp: false,
+    showDebug: false,
   };
   
 //  finishLogin = e=>{
@@ -144,6 +148,17 @@ if the auth fails, or there is none, then look for useremail / password credenti
     this.setState({showLogin: false, anchorEl: null});
   }
 
+  showDebug = e=>{
+//    lo("add help");
+//    console.log(debugText);
+    this.setState({showDebug: true, anchorEl: e.currentTarget});
+  }
+  
+  hideDebug = e=>{
+//    console.log("hide");
+    this.setState({showDebug: false, anchorEl: null});
+  }
+
   //handleClose = () => {
   //  console.log("handle close");
   //  this.setState({ anchorEl: null });
@@ -197,6 +212,10 @@ closeLogin = e=>{
             <Typography variant="title" color="inherit" className={this.props.classes.flex}>
               PostOps
             </Typography>
+                {this.props.debug && 
+                  <IconButton aria-owns={null} onClick={this.showDebug} color="inherit">
+                    <Bug/>
+                  </IconButton>}
                 <IconButton
                   aria-owns={null}
                   onClick={this.showHelp}
@@ -219,6 +238,17 @@ closeLogin = e=>{
                     </Tooltip>}
                 </IconButton>
 
+        <Popover
+          open={this.state.showDebug}
+          onClose={this.hideDebug}
+          anchorEl={this.state.anchorEl}
+          anchorReference={"anchorEl"}
+          anchorPosition={{ top: 400, left: 600 }}
+          anchorOrigin={{ vertical: "bottom", horizontal: "right", }}
+          transformOrigin={{ vertical: "top", horizontal: "right", }}
+        >
+          <DebugDialog/>
+        </Popover>
         <Popover
           open={this.state.showHelp}
           onClose={this.hideHelp}

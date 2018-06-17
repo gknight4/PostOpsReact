@@ -2,7 +2,7 @@
 function logInOut (type, params){
   switch (type){
     case "login":
-//      console.log("save login");
+//      console.log("save login in loginout");
       sessionStorage.setItem("auth", params.auth) ;
       break ;
     case "logout":
@@ -29,4 +29,10 @@ var debugThis = null ;
 function setDebugThis (val) {debugThis = val} ;
 function getDebugThis () {return debugThis} ;
 
-export { logInOut, setDebugThis, getDebugThis }
+var debugText = "" ;
+
+function lo(text){
+  debugText += text + "<br/>\n";
+}
+
+export { logInOut, setDebugThis, getDebugThis, lo, debugText }

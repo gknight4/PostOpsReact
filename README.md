@@ -25,14 +25,25 @@ implement Forgot Password\
 reformat for mobile screen\
 save *entire* messages: method, url, headers, body, and be able to re-select\
 add "send new StringStore" when the string list needs to be trimmed\
-add Init Suggestions for new users\
 remove 'SEQ' from accounts\
 make email address *not* case sensitive\
+stop "Server Not Responding" message from Login / Register\
+initializing strings are *not* stored back on server\
+auth check should verify that not only is the jwt valid, but it refers to a currently valid *user*\
+remove the 'strings' object from set stringstores\
+implement Raw body!\
 
 Bugs
 
 
 Changelog:
+
+Version: 0.2.1
+
+add proxy mode to avoid browser restrictions on https, headers, etc.
+put in selectors to change hosts and https for development / production\
+add Init Suggestions for new users\
+add 'debug' appBar item to display debug info in deployed (but still debug) build\
 
 Version: 0.1.7
 

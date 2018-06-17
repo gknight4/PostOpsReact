@@ -1,19 +1,25 @@
 import { httpC } from './Http'
 
 function initStringStores(props){
-  props.setHeaders([
+//  console.log("init string stores");
+  let strings= {
+    headers:    [
     "content-type: application/json",
-    "authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHBpcmUiOiIyMDE4LTA2LTEzVDEwOjE2OjU2LjE4MTcyMTI5OC0wNzowMCIsImZsYWdzIjoxLCJpZCI6IjViMjE0NzUwMDE5MTRmMjQ5OWY4MDAwYiJ9.Lh8a-2M4puO5z-KNm6XTuKs2gyrmpZcDYZ3Ah0JQRrQ    ",
-  ]);// save to Redux
-  props.setUrls([
-    "http://localhost:6026/open/users",
-    "http://localhost:6026/open/authenticate/bob@me.com/edea01c16b2d3c55694cb68967b344ee548d4a9a9ca3612fcf569e6ae93e0802",
-    "http://localhost:6026/auth/stringstore"
-  ]);
+    "authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHBpcmUiOiIyMDE4LTA2LTE0VDEyOjIyOjMyLjQ3MTk3MjQ0Ny0wNDowMCIsImZsYWdzIjoxLCJpZCI6IjViMjI4YzM4YTRlMDI4NjY2N2NhMGJhMiJ9.T4odF9DBI0nHjliYNPzFMs0-iHw62kjvxn5Ho5a1WCM", ],
+    urls:    [
+      "https://postops.us:6026/open/users",
+      "https://postops.us:6026/open/authenticate/bob@me.com/edea01c16b2d3c55694cb68967b344ee548d4a9a9ca3612fcf569e6ae93e0802",
+      "https://postops.us:6026/auth/stringstore"],
+    jsons:    ["useremail: bob@me.com", "password: edea01c16b2d3c55694cb68967b344ee548d4a9a9ca3612fcf569e6ae93e0802"],
+    bodytype: "Json",// forces the 'jsons' values to be accepted
+  }
+  props.setHeaders(strings.headers);// save to Redux
+  props.setUrls(strings.urls);
   props.setForms([]);
-  props.setJsons(["useremail: bob@me.com", "password: edea01c16b2d3c55694cb68967b344ee548d4a9a9ca3612fcf569e6ae93e0802"]); // theDuck0! hash
+  props.setJsons(strings.jsons); // theDuck0! hash
   props.setRaws([]);
   props.setSeq(0);
+  addStringStores(props, strings);// this is really designed for taking strings from the form *not* initializing!
 }
 
 function processStringStores(e, props){
@@ -181,7 +187,14 @@ sendStrings is an array of all those strings, with "type" of string
 //  console.log(strings);
 //  console.log(props);
   let sendStrings = [] ;
-  sendStrings.push({type: "url", text: strings.urls});
+// strings.urls may be a string(from the form), or an array (from initializing)
+//console.log(Array.isArray(strings.urls));  
+//console.log(strings.urls);
+  if (Array.isArray(strings.urls)){
+    strings.urls.forEach(e=>{ if (e !== "") sendStrings.push({type: "url", text: e}) }) ;
+  } else {
+    sendStrings.push({type: "url", text: strings.urls});
+  }
   strings.headers.forEach(e=>{ if (e !== "") sendStrings.push({type: "header", text: e}) }) ;
   switch (strings.bodytype){// this is the body type
     case "Raw":

@@ -4,6 +4,8 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
 import AppBarMenu from './components/AppBarMenu'
+import Checkbox from '@material-ui/core/Checkbox';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 import UrlInput from './components/UrlInput'
 import MethodSelect from './components/MethodSelect'
@@ -21,7 +23,7 @@ import { addStringStores } from './components/StringStores'
 import { setHeaders, setUrls, setForms, setJsons, setRaws, setSeq, setDebug } from './account'
 import ServerDownDialog from './components/ServerDownDialog'
 import Alert from './components/Alert'
-//import { getDebugThis } from './components/Utils'
+//import { debugText, lo } from './components/Utils'
 
 class Po02 extends Component{
   constructor(props){
@@ -42,12 +44,26 @@ class Po02 extends Component{
       serverUp: false,
       loggedIn: false,
       sendErrorAlert: "",
+      useProxy: false,
     }
 //    console.log("po02") ;
     this.startServerCheck();
     props.setDebug(false);
 //    window.po02.self = this ;
 //    console.log(window);
+  }
+  
+  handleChange = e=>{
+    switch(e.target.id){
+      case "useProxy":
+        this.setState({useProxy: e.target.checked});
+        break ;
+      default:
+        break ;
+    }
+//    console.log("change");
+//    console.log(e.target.id);
+//    console.log(e.target.checked);
   }
   
   testThis = e=>{
@@ -95,7 +111,7 @@ setLoggedIn = e=>{
 }
 
 checkServer = e=>{
-  httpC("tryserver").then(e=>{this.setState({serverUp: true})}, e=>{this.setState({serverUp: false})})
+//  httpC("tryserver").then(e=>{this.setState({serverUp: true})}, e=>{this.setState({serverUp: false})})
 }
 
 startServerCheck = e=>{
@@ -125,11 +141,11 @@ getStringStores = e=>{
 setStringStores = e=>{
   // send the whole array of test strings with types
 //  let headers = {headers: ["one", "two", "three"]} ;
-  let strstos = {type: "header", strings: [{text: "one", type: "url"}, {text: "two", type: "header"}, {text: "three", type: "json"}, ]} ;
+  let strstos = [{text: "one", type: "url"}, {text: "two", type: "header"}, {text: "three", type: "json"}, ] ;
   httpC("setstrstos", strstos) ;
 }
 
-sendCurrentStrings = e=>{
+sendCurrentStrings = useProxy=>{
   if(this.state.loggedIn){
     let strings = Object.assign({}, {headers: this.state.headers}, {urls: this.state.url}, 
       {jsons: this.state.jsons}, {forms: this.state.forms}, {raw: this.state.bodyraw}, {bodytype: this.state.bodytype},
@@ -137,7 +153,7 @@ sendCurrentStrings = e=>{
                               );
     addStringStores(this.props, strings);
   //  console.log(strings);
-      PostOpsRequest(strings).then(r=>{
+      PostOpsRequest(useProxy, strings).then(r=>{
         this.setState({
           respStatus: r.status,
           respHeaders: r.headers,
@@ -150,7 +166,7 @@ sendCurrentStrings = e=>{
 send = e=>{
 //  console.log("send");
   if(this.state.loggedIn){
-    this.sendCurrentStrings();
+    this.sendCurrentStrings(this.state.useProxy);
   } else {
     this.setState({sendErrorAlert: "warning: You can only send PostOps if you're Registered, and Logged In"});
   }
@@ -184,16 +200,27 @@ send = e=>{
               : null}
             <div style={{height: 20}}/>
             <Button variant="contained" color="primary" onClick={this.send}>Send</Button>
+            <FormControlLabel style={{marginLeft: 20}}
+              control={
+              <Checkbox
+                id="useProxy"
+                value="useproxyA"
+                onChange={this.handleChange}
+              />
+            }
+            label="Use&nbsp;Proxy"
+            />          
+            
             {this.state.sendErrorAlert !== "" && <Alert>{this.state.sendErrorAlert}</Alert>}
-            {this.props.debug ?
+            {this.props.debug ? <div>
             <div><Button variant="contained" color="secondary" onClick={this.showRedux}>Show</Button></div>
-            : null}
+            <div><Button variant="contained" color="default" onClick={this.setStringStores}>Set StringStores</Button></div>
+            </div>: null}
             <hr/>
             
 {/*            <div><Button variant="contained" color="secondary" onClick={this.showRedux}>Show</Button></div>
             <div><Button variant="contained" color="default" onClick={this.addStringStore}>Add StringStore</Button></div>
-            <div><Button variant="contained" color="default" onClick={this.getStringStores}>Get StringStores</Button></div>
-            <div><Button variant="contained" color="default" onClick={this.setStringStores}>Set StringStores</Button></div>*/}
+            <div><Button variant="contained" color="default" onClick={this.getStringStores}>Get StringStores</Button></div>*/}
             
             <h3>Response</h3>
             <RespStatus value={this.state.respStatus}/>

@@ -64,6 +64,7 @@ class LoginDialog extends Component{
         if(r.result === "ok"){
 //          console.log("loggin");
           logInOut("login", {auth: r.header});// save the auth header
+//          console.log("saved header");
           this.props.setJwt(r.header);
           if (this.state.rememberMe) logInOut("rememberme", {useremail: email, password: hash});
           this.props.close();

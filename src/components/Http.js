@@ -1,5 +1,8 @@
 //var SHA256 = require('crypto-js/sha256');
-const baseUrl = "http://localhost:6026" ;
+//const baseUrl = "https://postops.us:6026" ;
+const baseUrl = (window.origin.indexOf("localhost") > 0) ? 
+  "http://localhost:6026"  :
+  "https://postops.us:6026" ;
 
 const po = function (method, body){
         var ret = {
@@ -20,7 +23,7 @@ const po = function (method, body){
 
 function register (params){
   return new Promise((res, rej)=>{
-    console.log(params);
+//    console.log(params);
 //    params.password = SHA256(params.password).toString();
     let url = baseUrl + "/open/users" ;
     let httpObj = po ("POST", JSON.stringify(params)) ;
@@ -48,9 +51,11 @@ function login (params){
 
 function checkAuth (params){// this is the first attempt to contact the server
 //  console.log("checkAuth");
+//  console.log(baseUrl);
   return new Promise((res, rej)=>{
     let httpObj = po ("GET", "") ;
     httpObj.headers['Authorization'] = params.auth;
+//    console.log(params.auth);
     let url = baseUrl + "/auth/check" ;
     return fetch(url, httpObj).then(
       response => response.json().then(
@@ -61,13 +66,13 @@ function checkAuth (params){// this is the first attempt to contact the server
 }
 
 function addStringStore(params){
-  console.log("add strsto2");
+//  console.log("add strsto2");
 //  console.log(params);
   return new Promise((res, rej)=>{
     let url = baseUrl + "/auth/stringstore" ;
     let httpObj = po ("POST", JSON.stringify(params)) ;
     httpObj.headers['Authorization'] = sessionStorage.getItem("auth");
-//    console.log(httpObj);
+    console.log(httpObj);
     return fetch(url, httpObj).then(response => response.json().then(resp=>{ res(resp); }), e=>{rej(e)});
   })
 }
@@ -82,13 +87,13 @@ function getStringStores(params){
 }
 
 function setStringStores(params){// update the whole table
-  console.log("set strsto2");
-  console.log(params);
+//  console.log("set strsto2");
+//  console.log(params);
   return new Promise((res, rej)=>{
     let url = baseUrl + "/auth/all/stringstore" ; //  + params.type ;
     let httpObj = po ("PUT", JSON.stringify(params)) ;
     httpObj.headers['Authorization'] = sessionStorage.getItem("auth");
-    console.log(httpObj);
+//    console.log(httpObj);
     return fetch(url, httpObj).then(response => response.json().then(resp=>{ res(resp); }), e=>{rej(e)});
   })
 }
@@ -178,12 +183,42 @@ function processResponse(response, body){
   return ret ;
 }
 
-function PostOpsRequest (strings){
-//  console.log("post ops");
+function PostOpsProxyRequest(url, httpObj, res, rej){
+//  console.log("po proxy");
+//  console.log(httpObj);
+  
+  let proxy = {url: url, method: httpObj.method, headers: [], body: httpObj.body}; // , headers: httpObj.headers,
+  for (var prop in httpObj.headers){
+    proxy.headers.push(prop + ": " + httpObj.headers[prop]) ;
+  }
+  url = baseUrl + "/auth/proxy" ;
+//  console.log("upd headers");
+  httpObj.method = "POST" ;
+  httpObj.headers = {
+      'user-agent': 'Mozilla/4.0 MDN Example',
+      'content-type': 'application/json',
+      'Authorization' : sessionStorage.getItem("auth"),
+  }
+  httpObj.body = JSON.stringify(proxy) ;
+//  console.log(httpObj) ;
+//  let ret = {headers: [], status: 123, body: "none"} ;
+//  return new Promise((res2, rej2)=>{});
+//  console.log(httpObj);
+  return fetch(url, httpObj).then(response => response.json().then(resp=>{ res(resp); }), e=>{rej(e)});
+  
+//  return fetch(proxy, httpObj).then(response => {
+//    response.text().then(r=>{
+//      res(processResponse(response, r));
+//    });
+//  }) ;
+}
+
+function PostOpsRequest (useProxy, strings){
+//  console.log(useProxy);
   return new Promise((res, rej)=>{
     let url = strings.urls ;
     var body = ""
-    if ((strings.method === "POST") || (strings.method === "PUT")) {
+    if ((strings.method === "POST") || (strings.method === "PUT") || useProxy) {
       switch(strings.bodytype){
         case "Raw":
           body = getBodyRaw(strings.raw) ;
@@ -202,18 +237,21 @@ function PostOpsRequest (strings){
     let httpObj = po (strings.method, body) ;
     httpObj.headers = {"user-agent": "Mozilla/4.0 MDN Example"}
     addHeaders (httpObj, strings.headers) ;
+//    console.log(httpObj);
 //    httpObj.mode = "no-cors" ;
     
 //    console.log(httpObj);
 //    return fetch(url, httpObj).then(r => {console.log(r)}) ;
 //    httpObj.headers['Authorization'] = sessionStorage.getItem("auth");
-    return fetch(url, httpObj).then(response => {
-      response.text().then(r=>{
-//        console.log("response text") ;
-//        console.log(response);
-        res(processResponse(response, r));
-      });
-    }) ;
+    if(useProxy){
+      return PostOpsProxyRequest(url, httpObj, res, rej);
+    } else {
+      return fetch(url, httpObj).then(response => {
+        response.text().then(r=>{
+          res(processResponse(response, r));
+        });
+      }) ;
+    }
   })
   
 }
